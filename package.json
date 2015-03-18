@@ -2,6 +2,10 @@
   "name": "distribucache-memory-store",
   "version": "1.0.0",
   "description": "RAM-backed Distribucache Store",
+  "keywords": [
+    "distribucache",
+    "cache"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/areusjs/distribucache-memory-store.git"
