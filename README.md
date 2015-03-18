@@ -13,6 +13,7 @@ var distribucache = require('distribucache'),
 
   cacheClient = distribucache.createClient(memoryStore()),
 
+  model = require('../model'), // for example
   cache,
   Service;
 
