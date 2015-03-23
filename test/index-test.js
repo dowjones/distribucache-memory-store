@@ -82,9 +82,10 @@ describe('memoryStore', function () {
   });
 
   it('should set timeout', function (done) {
-    var isTimeoutSet = false;
+    var isTimeoutSet = false, timer;
 
-    store.on('timeout', function (key) {
+    timer = store.createTimer();
+    timer.on('timeout', function (key) {
       key.should.equal('tk');
       isTimeoutSet.should.be.ok;
       done();
@@ -94,7 +95,7 @@ describe('memoryStore', function () {
       isTimeoutSet = true;
     }
 
-    store.setTimeout('tk', 1, set);
+    timer.setTimeout('tk', 1, set);
   });
 
   function testGetSet(getName, setName, done) {
