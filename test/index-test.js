@@ -24,34 +24,38 @@ describe('memoryStore', function () {
   });
 
   it('should get/set value', function (done) {
-    testGetSet('getValue', 'setValue', done);
-  });
+    var key = 'k', inp = 123, out = 123;
+    async.waterfall([
+      store.get.bind(store, key, 'f'),
 
-  it('should set/get accessedAt', function (done) {
-    testGetSet('getAccessedAt', 'setAccessedAt', done);
-  });
+      function (v, cb) {
+        should(v).not.be.ok;
+        cb(null);
+      },
 
-  it('should set/get createdAt', function (done) {
-    testGetSet('getCreatedAt', 'setCreatedAt', done);
-  });
+      store.set.bind(store, key, 'f', inp),
+      store.get.bind(store, key, 'f'),
 
-  it('should set/get hash', function (done) {
-    testGetSet('getHash', 'setHash', done);
+      function (v, cb) {
+        v.should.equal(out);
+        cb(null);
+      }
+    ], done);
   });
 
   it('should be able to overwrite values', function (done) {
     var key = 'k';
     async.waterfall([
-      store.setValue.bind(store, key, 'v1'),
-      store.getValue.bind(store, key),
+      store.set.bind(store, key, 'f', 'v1'),
+      store.get.bind(store, key, 'f'),
 
       function (value, cb) {
         value.should.equal('v1');
         cb(null);
       },
 
-      store.setValue.bind(store, key, 'v2'),
-      store.getValue.bind(store, key),
+      store.set.bind(store, key, 'f', 'v2'),
+      store.get.bind(store, key, 'f'),
 
       function (value, cb) {
         value.should.equal('v2');
@@ -63,8 +67,8 @@ describe('memoryStore', function () {
   it('should del', function (done) {
     var key = 'k', val = 'v';
     async.waterfall([
-      store.setValue.bind(store, key, val),
-      store.getValue.bind(store, key),
+      store.set.bind(store, key, 'f', val),
+      store.get.bind(store, key, 'f'),
 
       function (value, cb) {
         value.should.equal(val);
@@ -72,7 +76,7 @@ describe('memoryStore', function () {
       },
 
       store.del.bind(store, key),
-      store.getValue.bind(store, 'k'),
+      store.get.bind(store, 'k', 'f'),
 
       function (value, cb) {
         should(value).not.be.ok;
@@ -98,23 +102,50 @@ describe('memoryStore', function () {
     timer.setTimeout('tk', 1, set);
   });
 
-  function testGetSet(getName, setName, done) {
-    var key = 'k', inp = 123, out = 123;
-    async.waterfall([
-      store[getName].bind(store, key),
+  describe('expire', function () {
+    it('should delete a key after ttl', function (done) {
+      var key = 'k', field = 'f', value = 'v1';
 
-      function (v, cb) {
-        should(v).not.be.ok;
-        cb(null);
-      },
+      async.waterfall([
+        store.set.bind(store, key, field, value),
+        store.expire.bind(store, key, 3),
 
-      store[setName].bind(store, key, inp),
-      store[getName].bind(store, key),
+        store.get.bind(store, key, field),
+        function checkBeforeExpiration(value, cb) {
+          value.should.equal(value);
+          setTimeout(store.get.bind(store, key, field, cb), 6);
+        },
 
-      function (v, cb) {
-        v.should.equal(out);
-        cb(null);
-      }
-    ], done);
-  }
+        function checkAfterExpiration(value, cb) {
+          should(value).not.be.ok;
+          cb(null);
+        }
+      ], done);
+    });
+
+    it('should allow replacing an expire', function (done) {
+      var key = 'k', field = 'f', value = 'v1';
+
+      async.waterfall([
+        store.set.bind(store, key, field, value),
+
+        store.expire.bind(store, key, 3),
+        store.expire.bind(store, key, 9),
+
+        function check(cb) {
+          setTimeout(store.get.bind(store, key, field, cb), 6);
+        },
+
+        function ensureFirstExpireDidNotDelete(value, cb) {
+          value.should.equal(value);
+          setTimeout(store.get.bind(store, key, field, cb), 6);
+        },
+
+        function ensureSecondExpireDidDelete(value, cb) {
+          should(value).not.be.ok;
+          cb(null);
+        }
+      ], done);
+    });
+  });
 });
