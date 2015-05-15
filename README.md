@@ -1,4 +1,4 @@
-# Distribucache Memory Store [![Build Status](https://secure.travis-ci.org/areusjs/distribucache-memory-store.png)](http://travis-ci.org/areusjs/distribucache-memory-store) [![NPM version](https://badge.fury.io/js/distribucache-memory-store.svg)](http://badge.fury.io/js/distribucache-memory-store)
+# Distribucache Memory Store [![Build Status](https://secure.travis-ci.org/dowjones/distribucache-memory-store.png)](http://travis-ci.org/dowjones/distribucache-memory-store) [![NPM version](https://badge.fury.io/js/distribucache-memory-store.svg)](http://badge.fury.io/js/distribucache-memory-store)
 
 A memory (RAM) datastore for the [Distribucache](https://github.com/areusjs/distribucache) auto-repopulating cache.
 
