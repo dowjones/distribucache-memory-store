@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/areusjs/distribucache-memory-store.git"
+    "url": "git://github.com/dowjones/distribucache-memory-store.git"
   },
   "author": "nemtsov@gmail.com",
   "main": "./lib",
