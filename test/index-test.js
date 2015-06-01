@@ -23,6 +23,18 @@ describe('memoryStore', function () {
     });
   });
 
+  it('should return null if prop not set but key exists', function (done) {
+    var key = 'k';
+    async.waterfall([
+      store.setProp.bind(store, key, 'a', 'av'),
+      store.getProp.bind(store, key, 'b'),
+      function (value, cb) {
+        should(value).equal(null);
+        cb();
+      }
+    ], done);
+  });
+
   it('should get/set value', function (done) {
     var key = 'k', inp = 123, out = 123;
     async.waterfall([
